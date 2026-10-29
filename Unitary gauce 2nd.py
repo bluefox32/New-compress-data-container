@@ -14,8 +14,10 @@ def gaussian_nd(x, mean, cov, n):
 def optimal_dimension(data, means, covariances):
     max_prob = -np.inf
     optimal_n = 1
-    for n in range(1, len(data[0]) + 1):
-        prob = gaussian_nd(data, means[:n], covariances[:n, :n], n)
+    # 修正(2026-10-29): data は単一ベクトルなので次元数は len(data)。data[0] はスカラーで len() できない
+    for n in range(1, len(data) + 1):
+        # 修正(2026-10-29): 平均・共分散を先頭 n 成分に切り詰めるのと合わせ、data も先頭 n 成分で評価する（形状不一致の解消）
+        prob = gaussian_nd(data[:n], means[:n], covariances[:n, :n], n)
         if prob > max_prob:
             max_prob = prob
             optimal_n = n
@@ -45,7 +47,8 @@ print("Optimal dimension:", n_opt)
 # 四元数の例
 quaternion = [0.5, 0.5, 0.5, 0.5]
 # ユニタリー演算を適用
-result = unitary_quaternion_operation(quaternion, data[:n_opt])
+# 修正(2026-10-29): ユニタリー行列は3×3固定で3次元ベクトル専用なので、n_opt で切り詰めずフルデータを渡す（n_opt は推定結果の報告用）
+result = unitary_quaternion_operation(quaternion, data)
 print("Unitary quaternion operation result:", result)
 
 def optimize_power_management_processing(qc):

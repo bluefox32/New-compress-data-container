@@ -17,7 +17,8 @@ def binary_compression_with_coords(data):
             symbol = 'Y'
         
         # 座標(x', y', z')を更新しながら記録
-        compressed_data.append(f"{symbol}{n},({x},{y},{z})")
+        # 修正(2026-10-29): 座標内をカンマ区切りにすると、エントリ区切りのカンマと衝突して解凍側の split(',') で壊れるため、座標内はスペース区切りにする
+        compressed_data.append(f"{symbol}{n},({x} {y} {z})")
         
         # 座標を更新（シンプルに1次元移動とする）
         z += 1
